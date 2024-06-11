@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "400933401939",
+    "project_id": "hematyuk-e76c4",
+    "storage_bucket": "hematyuk-e76c4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:400933401939:android:2d4a6c99540f6faa901da6",
+        "android_client_info": {
+          "package_name": "com.example.flutter_application_analisishemat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCefswAl5ubqNaWceiTM3OV3da50_aReng"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:400933401939:android:b2c651032f7ca5f2901da6",
+        "android_client_info": {
+          "package_name": "com.example.hemat_yuk"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCefswAl5ubqNaWceiTM3OV3da50_aReng"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
