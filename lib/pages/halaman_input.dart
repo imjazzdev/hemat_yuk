@@ -91,30 +91,112 @@ class _InputPageState extends State<InputPage> {
     await doc.set(json);
   }
 
+  double calculateFinalValue(
+      double totalHarga, double cashback, double diskon, double admin) {
+    double valueAfterFirstReduction =
+        totalHarga - (totalHarga * cashback / 100);
+
+    double valueAfterSecondReduction =
+        valueAfterFirstReduction - (valueAfterFirstReduction * diskon / 100);
+
+    double finalValue =
+        valueAfterSecondReduction + (valueAfterSecondReduction * admin / 100);
+
+    return finalValue;
+  }
+
+  void _newRumus() {
+    // final cashbackDana = double.parse(_cashbackdanaController.text) ?? 0.0;
+    // final biayaAdminDana = double.parse(_admindanaController.text) ?? 0.0;
+    // final diskonDana = double.parse(_diskondanaController.text) ?? 0.0;
+    // final totalPembayaranDana = (double.parse(_hargaController.text) -
+    //         double.parse(_potonganController.text)) -
+    //     cashbackDana -
+    //     (double.parse(_hargaController.text) * diskonDana) +
+    //     biayaAdminDana;
+    // resultDana = totalPembayaranDana < double.parse(_potonganController.text)
+    //     ? double.parse(_potonganController.text)
+    //     : totalPembayaranDana;
+
+    // //
+    // final cashbackGopay = double.parse(_cashbackgopayController.text) ?? 0.0;
+    // final biayaAdminGopay = double.parse(_admingopayController.text) ?? 0.0;
+    // final diskonGopay = double.parse(_diskongopayController.text) ?? 0.0;
+    // final totalPembayaranGopay = (double.parse(_hargaController.text) -
+    //         double.parse(_potonganController.text)) -
+    //     cashbackGopay -
+    //     (double.parse(_hargaController.text) * diskonGopay) +
+    //     biayaAdminGopay;
+    // resultGopay = totalPembayaranGopay < double.parse(_potonganController.text)
+    //     ? double.parse(_potonganController.text)
+    //     : totalPembayaranGopay;
+
+    // //
+    // final cashbackOvo = double.parse(_cashbackovoController.text) ?? 0.0;
+    // final biayaAdminOvo = double.parse(_adminovoController.text) ?? 0.0;
+    // final diskonOvo = double.parse(_diskonovoController.text) ?? 0.0;
+    // final totalPembayaranOvo = (double.parse(_hargaController.text) -
+    //         double.parse(_potonganController.text)) -
+    //     cashbackOvo -
+    //     (double.parse(_hargaController.text) * diskonOvo) +
+    //     biayaAdminOvo;
+    // resultOvo = totalPembayaranOvo < double.parse(_potonganController.text)
+    //     ? double.parse(_potonganController.text)
+    //     : totalPembayaranOvo;
+
+    resultDana = calculateFinalValue(
+        double.parse(_hargaController.text),
+        double.parse(_cashbackdanaController.text),
+        double.parse(_diskondanaController.text),
+        double.parse(_admindanaController.text));
+    resultGopay = calculateFinalValue(
+        double.parse(_hargaController.text),
+        double.parse(_cashbackgopayController.text),
+        double.parse(_diskongopayController.text),
+        double.parse(_admingopayController.text));
+    resultOvo = calculateFinalValue(
+        double.parse(_hargaController.text),
+        double.parse(_cashbackovoController.text),
+        double.parse(_diskonovoController.text),
+        double.parse(_adminovoController.text));
+    createData();
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => DetailPage(
+                dana: formatter.format(resultDana).toString() ?? '0',
+                gopay: formatter.format(resultGopay).toString() ?? '0',
+                ovo: formatter.format(resultOvo).toString() ?? '0',
+              )),
+    );
+  }
+
   void _rumus() {
+    _potonganController.text == '' ? '0' : _potonganController.text;
     totalHargaDana = (double.parse(_hargaController.text) -
         double.parse(_potonganController.text));
 
     resultDana = totalHargaDana -
-        (double.parse(_cashbackdanaController.text) / totalHargaDana * 100) -
-        (double.parse(_diskondanaController.text) / totalHargaDana * 100) +
-        (double.parse(_admindanaController.text) / totalHargaDana * 100);
+        (double.parse(_cashbackdanaController.text) / 100) -
+        (double.parse(_diskondanaController.text) / 100) +
+        (double.parse(_admindanaController.text) / 100);
 //
     totalHargaGopay = (double.parse(_hargaController.text) -
         double.parse(_potonganController.text));
 
     resultGopay = totalHargaGopay -
-        (double.parse(_cashbackgopayController.text) / totalHargaGopay * 100) -
-        (double.parse(_diskongopayController.text) / totalHargaGopay * 100) +
-        (double.parse(_admingopayController.text) / totalHargaGopay * 100);
+        (double.parse(_cashbackgopayController.text) / 100) -
+        (double.parse(_diskongopayController.text) / 100) +
+        (double.parse(_admingopayController.text) / 100);
 //
     totalHargaOvo = (double.parse(_hargaController.text) -
         double.parse(_potonganController.text));
 
     resultOvo = totalHargaOvo -
-        (double.parse(_cashbackovoController.text) / totalHargaOvo * 100) -
-        (double.parse(_diskonovoController.text) / totalHargaOvo * 100) +
-        (double.parse(_adminovoController.text) / totalHargaOvo * 100);
+        (double.parse(_cashbackovoController.text) / 100) -
+        (double.parse(_diskonovoController.text) / 100) +
+        (double.parse(_adminovoController.text) / 100);
 
     // print(resultDana.toString());
     // print(resultGopay.toString());
@@ -124,7 +206,7 @@ class _InputPageState extends State<InputPage> {
     print(formatter.format(resultGopay));
     print(formatter.format(resultOvo));
 
-    createData();
+    // createData();
 
     Navigator.push(
       context,
@@ -438,7 +520,7 @@ class _InputPageState extends State<InputPage> {
                         child: Text('Batal'),
                       ),
                       ElevatedButton(
-                        onPressed: _rumus,
+                        onPressed: _newRumus,
                         child: Text('Simpan'),
                       ),
                     ],
