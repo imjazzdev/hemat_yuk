@@ -31,13 +31,15 @@ class _InputPageState extends State<InputPage> {
   final TextEditingController _adminovoController = TextEditingController();
   final TextEditingController _diskonovoController = TextEditingController();
   //
-  final formatter = NumberFormat.decimalPatternDigits(
-    locale: 'id',
-  );
+  final formatter =
+      NumberFormat.decimalPatternDigits(locale: 'id', decimalDigits: 3);
   //
   var resultDana;
+  var totalHargaDana;
   var resultGopay;
+  var totalHargaGopay;
   var resultOvo;
+  var totalHargaOvo;
 
   @override
   void dispose() {
@@ -70,27 +72,57 @@ class _InputPageState extends State<InputPage> {
     _diskonovoController.clear();
   }
 
+  Future createData() async {
+    final doc = FirebaseFirestore.instance.collection('HISTORY').doc(
+        DateFormat('dd-MM-yyyy - HH:mm:ss').format(DateTime.now()).toString());
+    final formatter = NumberFormat.decimalPatternDigits(
+      locale: 'id',
+    );
+    final data = DataInput(
+        dana: formatter.format(resultDana).toString(),
+        gopay: formatter.format(resultGopay).toString(),
+        ovo: formatter.format(resultOvo).toString(),
+        date_time: DateFormat('dd-MM-yyyy - HH:mm:ss')
+            .format(DateTime.now())
+            .toString(),
+        user: Constants.currentUser.toString());
+
+    final json = data.toJson();
+    await doc.set(json);
+  }
+
   void _rumus() {
-    resultDana = (int.parse(_hargaController.text) -
-            int.parse(_potonganController.text)) -
-        (int.parse(_cashbackdanaController.text) / 100) -
-        (int.parse(_hargaController.text) *
-            (int.parse(_diskondanaController.text) / 100)) +
-        (int.parse(_admindanaController.text) / 100);
+    totalHargaDana = (double.parse(_hargaController.text) -
+        double.parse(_potonganController.text));
 
-    resultGopay = (int.parse(_hargaController.text) -
-            int.parse(_potonganController.text)) -
-        (int.parse(_cashbackgopayController.text) / 100) -
-        (int.parse(_hargaController.text) *
-            (int.parse(_diskongopayController.text) / 100)) +
-        (int.parse(_admingopayController.text) / 100);
+    resultDana = totalHargaDana -
+        (double.parse(_cashbackdanaController.text) / totalHargaDana * 100) -
+        (double.parse(_diskondanaController.text) / totalHargaDana * 100) +
+        (double.parse(_admindanaController.text) / totalHargaDana * 100);
+//
+    totalHargaGopay = (double.parse(_hargaController.text) -
+        double.parse(_potonganController.text));
 
-    resultOvo = (int.parse(_hargaController.text) -
-            int.parse(_potonganController.text)) -
-        (int.parse(_cashbackovoController.text) / 100) -
-        (int.parse(_hargaController.text) *
-            (int.parse(_diskonovoController.text) / 100)) +
-        (int.parse(_adminovoController.text) / 100);
+    resultGopay = totalHargaGopay -
+        (double.parse(_cashbackgopayController.text) / totalHargaGopay * 100) -
+        (double.parse(_diskongopayController.text) / totalHargaGopay * 100) +
+        (double.parse(_admingopayController.text) / totalHargaGopay * 100);
+//
+    totalHargaOvo = (double.parse(_hargaController.text) -
+        double.parse(_potonganController.text));
+
+    resultOvo = totalHargaOvo -
+        (double.parse(_cashbackovoController.text) / totalHargaOvo * 100) -
+        (double.parse(_diskonovoController.text) / totalHargaOvo * 100) +
+        (double.parse(_adminovoController.text) / totalHargaOvo * 100);
+
+    // print(resultDana.toString());
+    // print(resultGopay.toString());
+    // print(resultOvo.toString());
+
+    print(formatter.format(resultDana));
+    print(formatter.format(resultGopay));
+    print(formatter.format(resultOvo));
 
     createData();
 
@@ -98,9 +130,9 @@ class _InputPageState extends State<InputPage> {
       context,
       MaterialPageRoute(
           builder: (context) => DetailPage(
-              dana: formatter.format(resultDana.toString()),
-              gopay: formatter.format(resultGopay.toString()),
-              ovo: formatter.format(resultOvo.toString()))),
+              dana: formatter.format(resultDana).toString(),
+              gopay: formatter.format(resultGopay).toString(),
+              ovo: formatter.format(resultOvo).toString())),
     );
   }
 
@@ -416,24 +448,5 @@ class _InputPageState extends State<InputPage> {
             )
           ],
         ));
-  }
-
-  Future createData() async {
-    final doc = FirebaseFirestore.instance.collection('HISTORY').doc(
-        DateFormat('dd-MM-yyyy - HH:mm:ss').format(DateTime.now()).toString());
-    final formatter = NumberFormat.decimalPatternDigits(
-      locale: 'id',
-    );
-    final data = DataInput(
-        dana: formatter.format(resultDana).toString(),
-        gopay: formatter.format(resultGopay).toString(),
-        ovo: formatter.format(resultOvo).toString(),
-        date_time: DateFormat('dd-MM-yyyy - HH:mm:ss')
-            .format(DateTime.now())
-            .toString(),
-        user: Constants.currentUser.toString());
-
-    final json = data.toJson();
-    await doc.set(json);
   }
 }
